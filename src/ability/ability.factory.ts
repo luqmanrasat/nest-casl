@@ -31,6 +31,7 @@ export class AbilityFactory {
       can(Action.MANAGE, 'all');
     } else {
       can(Action.READ, 'all');
+      cannot(Action.CREATE, User).because('not admin!!!');
     }
 
     return build({

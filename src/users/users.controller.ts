@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AbilityFactory, Action } from '../ability/ability.factory';
 import { User } from './entities/user.entity';
+import { ForbiddenError } from '@casl/ability';
 
 @Controller('users')
 export class UsersController {
@@ -26,12 +27,21 @@ export class UsersController {
     const user: User = { id: 1, isAdmin: false }; // mock user
     const ability = this.abilityFactory.defineAbility(user);
 
-    const isAllowed = ability.can(Action.CREATE, User);
-    if (!isAllowed) {
-      throw new ForbiddenException('only admin!!!');
-    }
+    // const isAllowed = ability.can(Action.CREATE, User);
+    // if (!isAllowed) {
+    //   throw new ForbiddenException('only admin!!!');
+    // }
 
-    return this.usersService.create(createUserDto);
+    try {
+      ForbiddenError.from(ability).throwUnlessCan(Action.CREATE, User);
+
+      return this.usersService.create(createUserDto);
+    } catch (error) {
+      // Possible to make code cleaner by using an exception filter
+      if (error instanceof ForbiddenError) {
+        throw new ForbiddenException(error.message);
+      }
+    }
   }
 
   @Get()
