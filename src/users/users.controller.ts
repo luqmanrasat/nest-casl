@@ -1,14 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ForbiddenException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AbilityFactory, Action } from '../ability/ability.factory';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly abilityFactory: AbilityFactory,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
+    const user: User = { id: 1, isAdmin: false }; // mock user
+    const ability = this.abilityFactory.defineAbility(user);
+
+    const isAllowed = ability.can(Action.CREATE, User);
+    if (!isAllowed) {
+      throw new ForbiddenException('only admin!!!');
+    }
+
     return this.usersService.create(createUserDto);
   }
 
