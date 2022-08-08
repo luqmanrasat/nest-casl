@@ -10,9 +10,10 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AbilityFactory, Action } from '../ability/ability.factory';
+import { AbilityFactory } from '../ability/ability.factory';
 import { User } from './entities/user.entity';
 import { ForbiddenError } from '@casl/ability';
+import { Action } from '../ability/types';
 
 @Controller('users')
 export class UsersController {
@@ -26,7 +27,7 @@ export class UsersController {
     const user: User = { id: 1, isAdmin: false }; // mock user
     const ability = this.abilityFactory.defineAbility(user);
 
-    ForbiddenError.from(ability).throwUnlessCan(Action.CREATE, User);
+    ForbiddenError.from(ability).throwUnlessCan(Action.Create, User);
 
     return this.usersService.create(createUserDto);
   }

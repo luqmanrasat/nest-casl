@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AppAbility } from '../ability.factory';
+import { AppAbility } from '../types';
 
 @Catch(ForbiddenError)
 export class ForbiddenAbilityFilter implements ExceptionFilter {

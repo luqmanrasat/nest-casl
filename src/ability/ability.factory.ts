@@ -3,22 +3,10 @@ import {
   AbilityBuilder,
   AbilityClass,
   ExtractSubjectType,
-  InferSubjects,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
-
-export enum Action {
-  MANAGE = 'manage',
-  CREATE = 'create',
-  READ = 'read',
-  UPDATE = 'update',
-  DELETE = 'delete',
-}
-
-export type Subjects = InferSubjects<typeof User> | 'all';
-
-export type AppAbility = Ability<[Action, Subjects]>;
+import { AppAbility, Action, Subjects } from './types';
 
 @Injectable()
 export class AbilityFactory {
@@ -28,10 +16,10 @@ export class AbilityFactory {
     );
 
     if (user.isAdmin) {
-      can(Action.MANAGE, 'all');
+      can(Action.Manage, 'all');
     } else {
-      can(Action.READ, 'all');
-      cannot(Action.CREATE, User).because('not admin!!!');
+      can(Action.Read, 'all');
+      cannot(Action.Create, User).because('not admin!!!');
     }
 
     return build({
