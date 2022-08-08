@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -27,21 +26,9 @@ export class UsersController {
     const user: User = { id: 1, isAdmin: false }; // mock user
     const ability = this.abilityFactory.defineAbility(user);
 
-    // const isAllowed = ability.can(Action.CREATE, User);
-    // if (!isAllowed) {
-    //   throw new ForbiddenException('only admin!!!');
-    // }
+    ForbiddenError.from(ability).throwUnlessCan(Action.CREATE, User);
 
-    try {
-      ForbiddenError.from(ability).throwUnlessCan(Action.CREATE, User);
-
-      return this.usersService.create(createUserDto);
-    } catch (error) {
-      // Possible to make code cleaner by using an exception filter
-      if (error instanceof ForbiddenError) {
-        throw new ForbiddenException(error.message);
-      }
-    }
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
