@@ -12,8 +12,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AbilityFactory } from '../ability/ability.factory';
 import { User } from './entities/user.entity';
-import { ForbiddenError } from '@casl/ability';
-import { Action } from '../ability/types';
 
 @Controller('users')
 export class UsersController {
@@ -24,12 +22,9 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    const user: User = { id: 1, isAdmin: false, orgId: 1 }; // mock user
-    const ability = this.abilityFactory.defineAbility(user);
+    const user: User = { id: 1, isAdmin: true, orgId: 1 }; // mock user
 
-    ForbiddenError.from(ability).throwUnlessCan(Action.Create, User);
-
-    return this.usersService.create(createUserDto);
+    return this.usersService.create(createUserDto, user);
   }
 
   @Get()
@@ -44,14 +39,9 @@ export class UsersController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const user: User = { id: 1, isAdmin: false, orgId: 1 }; // mock user
-    const userToUpdate = this.usersService.findOne(+id);;
-    
-    const ability = this.abilityFactory.defineAbility(user);
+    const user: User = { id: 1, isAdmin: true, orgId: 1 }; // mock user
 
-    ForbiddenError.from(ability).throwUnlessCan(Action.Update, userToUpdate);
-
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(+id, updateUserDto, user);
   }
 
   @Delete(':id')
