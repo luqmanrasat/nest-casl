@@ -3,8 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AbilityModule } from './ability/ability.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ForbiddenAbilityFilter } from './ability/filters/forbidden-ability.filter';
+import { AbilitiesGuard } from './ability/guards/abilities.guard';
 
 @Module({
   imports: [UsersModule, AbilityModule],
@@ -14,6 +15,10 @@ import { ForbiddenAbilityFilter } from './ability/filters/forbidden-ability.filt
     {
       provide: APP_FILTER,
       useClass: ForbiddenAbilityFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AbilitiesGuard,
     },
   ],
 })

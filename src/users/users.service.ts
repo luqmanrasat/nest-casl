@@ -10,10 +10,7 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(private readonly abilityFactory: AbilityFactory) {}
 
-  create(createUserDto: CreateUserDto, user: User) {
-    const ability = this.abilityFactory.defineAbility(user);
-    ForbiddenError.from(ability).throwUnlessCan(Action.Create, User);
-
+  create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
 
@@ -34,8 +31,8 @@ export class UsersService {
 
   update(id: number, updateUserDto: UpdateUserDto, user: User) {
     const userToUpdate = this.findOne(+id);
-    
     const ability = this.abilityFactory.defineAbility(user);
+
     ForbiddenError.from(ability).throwUnlessCan(Action.Update, userToUpdate);
 
     return `This action updates a #${id} user`;

@@ -18,11 +18,12 @@ export class AbilityFactory {
     if (user.isAdmin) {
       can(Action.Manage, 'all');
       cannot(Action.Manage, User, { orgId: { $ne: user.orgId } }).because(
-        'You can only manage users in your own organization',
+        'You can only manage users in your own organization!',
       );
     } else {
-      can(Action.Read, 'all');
-      cannot(Action.Create, User).because('not admin!!!');
+      can([Action.Read, Action.Update], User);
+      cannot([Action.Create, Action.Delete], User).because('You are not the admin!');
+      cannot(Action.Update, User, { id: { $ne: user.id } }).because('You are not allowed to update others!');
     }
 
     return build({

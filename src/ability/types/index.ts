@@ -12,3 +12,8 @@ export enum Action {
 export type Subjects = InferSubjects<typeof User> | 'all';
 
 export type AppAbility = Ability<[Action, Subjects]>;
+
+export interface RequiredRule {
+  action: Action;
+  subject: Subjects;
+}
