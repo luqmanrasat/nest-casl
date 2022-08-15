@@ -17,6 +17,9 @@ export class AbilityFactory {
 
     if (user.isAdmin) {
       can(Action.Manage, 'all');
+      cannot(Action.Manage, User, { orgId: { $ne: user.orgId } }).because(
+        'You can only manage users in your own organization',
+      );
     } else {
       can(Action.Read, 'all');
       cannot(Action.Create, User).because('not admin!!!');

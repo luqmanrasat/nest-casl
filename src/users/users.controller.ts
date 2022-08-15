@@ -24,7 +24,7 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    const user: User = { id: 1, isAdmin: false }; // mock user
+    const user: User = { id: 1, isAdmin: false, orgId: 1 }; // mock user
     const ability = this.abilityFactory.defineAbility(user);
 
     ForbiddenError.from(ability).throwUnlessCan(Action.Create, User);
@@ -44,6 +44,13 @@ export class UsersController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user: User = { id: 1, isAdmin: false, orgId: 1 }; // mock user
+    const userToUpdate = this.usersService.findOne(+id);;
+    
+    const ability = this.abilityFactory.defineAbility(user);
+
+    ForbiddenError.from(ability).throwUnlessCan(Action.Update, userToUpdate);
+
     return this.usersService.update(+id, updateUserDto);
   }
 
